@@ -1,0 +1,292 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+# Load data
+a.post.bl <- read_csv("C:/Users/hebers/OneDrive - University Of Massachusetts Medical School/Documents/UMass Projects/Clinical-QI-Carter-Henry/A Post Baseline.csv")
+a.post.jan <- read_csv("C:/Users/hebers/OneDrive - University Of Massachusetts Medical School/Documents/UMass Projects/Clinical-QI-Carter-Henry/A Post Jan.csv")
+a.post.jun <- read_csv("C:/Users/hebers/OneDrive - University Of Massachusetts Medical School/Documents/UMass Projects/Clinical-QI-Carter-Henry/A Post Jun.csv")
+b.pre <- read_csv("C:/Users/hebers/OneDrive - University Of Massachusetts Medical School/Documents/UMass Projects/Clinical-QI-Carter-Henry/B Pre.csv")
+b.post.jan <- read_csv("C:/Users/hebers/OneDrive - University Of Massachusetts Medical School/Documents/UMass Projects/Clinical-QI-Carter-Henry/B Post Jan.csv")
+b.post.jun <- read_csv("C:/Users/hebers/OneDrive - University Of Massachusetts Medical School/Documents/UMass Projects/Clinical-QI-Carter-Henry/B Post Jun.csv")
+c.pre <- read_csv("C:/Users/hebers/OneDrive - University Of Massachusetts Medical School/Documents/UMass Projects/Clinical-QI-Carter-Henry/C Pre.csv")
+d.pre <- read_csv("C:/Users/hebers/OneDrive - University Of Massachusetts Medical School/Documents/UMass Projects/Clinical-QI-Carter-Henry/D Pre.csv")
+e.post.jan <- read_csv("C:/Users/hebers/OneDrive - University Of Massachusetts Medical School/Documents/UMass Projects/Clinical-QI-Carter-Henry/E Post Jan.csv")
+e.post.jun <- read_csv("C:/Users/hebers/OneDrive - University Of Massachusetts Medical School/Documents/UMass Projects/Clinical-QI-Carter-Henry/E Post Jun.csv")
+f.pre <- read_csv("C:/Users/hebers/OneDrive - University Of Massachusetts Medical School/Documents/UMass Projects/Clinical-QI-Carter-Henry/F Pre.csv")
+b.pre
+d.pre
+```
+
+# Data transformations 
+
+```{r}
+# SCALES ARE REVERSED, NEED TO BE FLIPPED
+
+# Combine data
+# Pre data
+b.pre <- b.pre %>%
+  mutate(Q2 = NA)
+dat.pre <- rbind(b.pre, c.pre, d.pre, f.pre)
+dat.pre <- dat.pre %>%
+  mutate(pre_post = "Pre")
+dat.pre$pre_post <- as.factor(dat.pre$pre_post)
+dat.pre <- dat.pre[, c(1:12, 20)]
+# Flip values
+dat.pre[, c(1:12)] = 6 - dat.pre[, c(1:12)]
+dat.pre
+
+# Post data
+dat.post <- rbind(a.post.bl, a.post.jan, a.post.jun, b.post.jan, b.post.jun, e.post.jan, e.post.jun)
+dat.post <- dat.post[, c(1:16)]
+dat.post <- dat.post %>%
+  mutate(pre_post = "Post")
+dat.post$pre_post <- as.factor(dat.post$pre_post)
+# Flip values
+dat.post[, c(1:16)] = 6 - dat.post[, c(1:16)]
+dat.post
+
+# Post data, factor version
+dat.post.fac <- dat.post %>% 
+  mutate_if(is.double, as.factor)
+dat.post.fac
+
+# Combined pre and post
+dat.post.for.comb <- dat.post[, c(1:12, 17)]
+dat.post.for.comb
+dat.all <- rbind(dat.pre, dat.post.for.comb)
+# No need to flip values again
+dat.all
+
+# Grouped data
+dat.group <- dat.all %>% 
+  group_by(pre_post)
+```
+
+# Pre- vs post-intervention comparison
+
+```{r}
+# Job stress
+job.stress <- ggplot(mapping = aes(x = pre_post, fill = pre_post, y = Q2_1), data = dat.all) + 
+  geom_bar(stat = "summary", fun = "mean") + 
+  stat_summary(mapping = aes(label = round(..y.., 2)), fun.y = mean, geom = "text", size = 4, color = "white", vjust = 1.5) + 
+  ggtitle("'The amount of job stress I feel is reasonable'") + 
+  xlab("Pre- or Post-Intervention") + 
+  ylab("Average Rating") + 
+  coord_cartesian(ylim = c(0, 5)) + 
+  scale_fill_manual(values = c("maroon", "darkblue")) + 
+  theme_classic() + 
+  theme(legend.position = "none")
+job.stress
+```
+
+```{r}
+# Communication
+communication <- ggplot(mapping = aes(x = pre_post, fill = pre_post, y = Q2_2), data = dat.all) + 
+  geom_bar(stat = "summary", fun = "mean") + 
+  stat_summary(mapping = aes(label = round(..y.., 2)), fun.y = mean, geom = "text", size = 4, color = "white", vjust = 1.5) + 
+  ggtitle("'Communication between providers, nurses, and other \nmedical personnel is good at HFHC'") + 
+  xlab("Pre- or Post-Intervention") + 
+  ylab("Average Rating") + 
+  coord_cartesian(ylim = c(0, 5)) + 
+  scale_fill_manual(values = c("maroon", "darkblue")) + 
+  theme_classic() + 
+  theme(legend.position = "none")
+communication
+```
+
+```{r}
+# Personal time
+personal.time <- ggplot(mapping = aes(x = pre_post, fill = pre_post, y = Q2_3), data = dat.all) + 
+  geom_bar(stat = "summary", fun = "mean") + 
+  stat_summary(mapping = aes(label = round(..y.., 2)), fun.y = mean, geom = "text", size = 4, color = "white", vjust = 1.5) + 
+  ggtitle("'I can enjoy my personal time without focusing on work matters'") + 
+  xlab("Pre- or Post-Intervention") + 
+  ylab("Average Rating") + 
+  coord_cartesian(ylim = c(0, 5)) + 
+  scale_fill_manual(values = c("maroon", "darkblue")) + 
+  theme_classic() + 
+  theme(legend.position = "none")
+personal.time
+```
+
+```{r}
+# Disconnecting from work
+disconnect <- ggplot(mapping = aes(x = pre_post, fill = pre_post, y = Q2_4), data = dat.all) + 
+  geom_bar(stat = "summary", fun = "mean") + 
+  stat_summary(mapping = aes(label = round(..y.., 2)), fun.y = mean, geom = "text", size = 4, color = "white", vjust = 1.5) + 
+  ggtitle("'I am able to disconnect from work communications \nduring my free time (emails/phone etc.)'") + 
+  xlab("Pre- or Post-Intervention") + 
+  ylab("Average Rating") + 
+  coord_cartesian(ylim = c(0, 5)) + 
+  scale_fill_manual(values = c("maroon", "darkblue")) + 
+  theme_classic() + 
+  theme(legend.position = "none")
+disconnect
+```
+
+```{r}
+# Freeing the mind
+free.mind <- ggplot(mapping = aes(x = pre_post, fill = pre_post, y = Q2_5), data = dat.all) + 
+  geom_bar(stat = "summary", fun = "mean") + 
+  stat_summary(mapping = aes(label = round(..y.., 2)), fun.y = mean, geom = "text", size = 4, color = "white", vjust = 1.5) + 
+  ggtitle("'I am able to free my mind from work when I am away from it'") + 
+  xlab("Pre- or Post-Intervention") + 
+  ylab("Average Rating") + 
+  coord_cartesian(ylim = c(0, 5)) + 
+  scale_fill_manual(values = c("maroon", "darkblue")) + 
+  theme_classic() + 
+  theme(legend.position = "none")
+free.mind
+```
+
+```{r}
+# Worn out
+worn.out <- ggplot(mapping = aes(x = pre_post, fill = pre_post, y = Q2_6), data = dat.all) + 
+  geom_bar(stat = "summary", fun = "mean") + 
+  stat_summary(mapping = aes(label = round(..y.., 2)), fun.y = mean, geom = "text", size = 4, color = "white", vjust = 1.5) + 
+  ggtitle("'I feel worn out at the end of a working day'") + 
+  xlab("Pre- or Post-Intervention") + 
+  ylab("Average Rating") + 
+  coord_cartesian(ylim = c(0, 5)) + 
+  scale_fill_manual(values = c("maroon", "darkblue")) + 
+  theme_classic() + 
+  theme(legend.position = "none")
+worn.out
+```
+
+```{r}
+# Team working well together
+team.works.well <- ggplot(mapping = aes(x = pre_post, fill = pre_post, y = Q2_7), data = dat.all) + 
+  geom_bar(stat = "summary", fun = "mean") + 
+  stat_summary(mapping = aes(label = round(..y.., 2)), fun.y = mean, geom = "text", size = 4, color = "white", vjust = 1.5) + 
+  ggtitle("'The HFHC team works well together'") + 
+  xlab("Pre- or Post-Intervention") + 
+  ylab("Average Rating") + 
+  coord_cartesian(ylim = c(0, 5)) + 
+  scale_fill_manual(values = c("maroon", "darkblue")) + 
+  theme_classic() + 
+  theme(legend.position = "none")
+team.works.well
+```
+
+```{r}
+# Collaboration
+collaboration <- ggplot(mapping = aes(x = pre_post, fill = pre_post, y = Q2_8), data = dat.all) + 
+  geom_bar(stat = "summary", fun = "mean") + 
+  stat_summary(mapping = aes(label = round(..y.., 2)), fun.y = mean, geom = "text", size = 4, color = "white", vjust = 1.5) + 
+  ggtitle("'I have a collaborative working relationship with APPs in the HFHC practice'") + 
+  xlab("Pre- or Post-Intervention") + 
+  ylab("Average Rating") + 
+  coord_cartesian(ylim = c(0, 5)) + 
+  scale_fill_manual(values = c("maroon", "darkblue")) + 
+  theme_classic() + 
+  theme(legend.position = "none")
+collaboration
+```
+
+```{r}
+# EPIC
+epic <- ggplot(mapping = aes(x = pre_post, fill = pre_post, y = Q2_9), data = dat.all) + 
+  geom_bar(stat = "summary", fun = "mean") + 
+  stat_summary(mapping = aes(label = round(..y.., 2)), fun.y = mean, geom = "text", size = 4, color = "white", vjust = 1.5) + 
+  ggtitle("'I am able to manage my outpatient EPIC in basket efficiently'") + 
+  xlab("Pre- or Post-Intervention") + 
+  ylab("Average Rating") + 
+  coord_cartesian(ylim = c(0, 5)) + 
+  scale_fill_manual(values = c("maroon", "darkblue")) + 
+  theme_classic() + 
+  theme(legend.position = "none")
+epic
+```
+
+```{r}
+# Managing messages
+managing.messages <- ggplot(mapping = aes(x = pre_post, fill = pre_post, y = Q2_10), data = dat.all) + 
+  geom_bar(stat = "summary", fun = "mean") + 
+  stat_summary(mapping = aes(label = round(..y.., 2)), fun.y = mean, geom = "text", size = 4, color = "white", vjust = 1.5) + 
+  ggtitle("'Managing in basket messages takes up an unreasonable \namount of my time outside of normal clinical hours'") + 
+  xlab("Pre- or Post-Intervention") + 
+  ylab("Average Rating") + 
+  coord_cartesian(ylim = c(0, 5)) + 
+  scale_fill_manual(values = c("maroon", "darkblue")) + 
+  theme_classic() + 
+  theme(legend.position = "none")
+managing.messages
+```
+
+```{r}
+# Taking action on messages
+action.on.messages <- ggplot(mapping = aes(x = pre_post, fill = pre_post, y = Q2_11), data = dat.all) + 
+  geom_bar(stat = "summary", fun = "mean") + 
+  stat_summary(mapping = aes(label = round(..y.., 2)), fun.y = mean, geom = "text", size = 4, color = "white", vjust = 1.5) + 
+  ggtitle("'I am able to take action on the messages sent to me in my in basket without \nsending the message back to the team for additional information'") + 
+  xlab("Pre- or Post-Intervention") + 
+  ylab("Average Rating") + 
+  coord_cartesian(ylim = c(0, 5)) + 
+  scale_fill_manual(values = c("maroon", "darkblue")) + 
+  theme_classic() + 
+  theme(legend.position = "none")
+action.on.messages
+```
+
+# Post-intervention breakdown
+
+```{r}
+# Improved ability to manage in basket tasks
+improved.ability <- ggplot(mapping = aes(x = Q2_12), data = dat.post) + 
+  geom_bar(stat = "count", fill = "darkblue") + 
+  stat_count(mapping = aes(label = ..count..), geom = "text", color = "white", size = 4, vjust = 1.5) + 
+  ggtitle("'I have found the APP collaboration model has improved \nmy ability to manage in basket tasks'") + 
+  xlab("Rating") + 
+  ylab("Count") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+improved.ability
+```
+
+```{r}
+# Meeting patient needs
+meeting.patient.needs <- ggplot(mapping = aes(x = Q2_13), data = dat.post) + 
+  geom_bar(stat = "count", fill = "darkblue") + 
+  stat_count(mapping = aes(label = ..count..), geom = "text", color = "white", size = 4, vjust = 1.5) + 
+  ggtitle("'I have found the APP collaboration model helpful \nto meet the needs of my patients'") + 
+  xlab("Rating") + 
+  ylab("Count") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+meeting.patient.needs
+```
+
+```{r}
+# Satisfaction
+satisfaction <- ggplot(mapping = aes(x = Q2_14), data = dat.post) + 
+  geom_bar(stat = "count", fill = "darkblue") + 
+  stat_count(mapping = aes(label = ..count..), geom = "text", color = "white", size = 4, vjust = 1.5) + 
+  ggtitle("'I am satisfied with the APP collaboration model'") + 
+  xlab("Rating") + 
+  ylab("Count") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+satisfaction
+```
+
+```{r}
+# Working relationship with collaborating clinician
+working.relationship.collaborating.clinician <- ggplot(mapping = aes(x = Q2_15), data = dat.post) + 
+  geom_bar(stat = "count", fill = "darkblue") + 
+  stat_count(mapping = aes(label = ..count..), geom = "text", color = "white", size = 4, vjust = 1.5) + 
+  ggtitle("'I have a good working relationship with my collaborating clinician'") + 
+  xlab("Rating") + 
+  ylab("Count") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+working.relationship.collaborating.clinician
+```
+
