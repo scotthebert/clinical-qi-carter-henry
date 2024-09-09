@@ -1,14 +1,16 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 
-```{r}
+```{r, include = FALSE}
 library(tidyverse)
 library(pander)
 ```
 
-```{r}
+```{r, include = FALSE}
 # Load data
 staff <- read_csv("C:/Users/hebers/OneDrive - University Of Massachusetts Medical School/Documents/UMass Projects/Clinical-QI-Carter-Henry/staff_june2024.csv")
 unpaired <- read_csv("C:/Users/hebers/OneDrive - University Of Massachusetts Medical School/Documents/UMass Projects/Clinical-QI-Carter-Henry/unpairedclinician_june2024.csv")
@@ -22,14 +24,16 @@ combined
 combined2
 ```
 
-# Shared variables
+# Questions asked to both staff and unpaired clinicians, data combined
 
-```{r}
+## Roles
+
+```{r, echo = FALSE}
 # Role
 table(combined$role) %>% pander()
 ```
 
-```{r}
+```{r, echo = FALSE}
 # Stress
 stress <- ggplot(data = combined2, mapping = aes(x = stress)) + 
   geom_bar() + 
@@ -41,7 +45,7 @@ stress <- ggplot(data = combined2, mapping = aes(x = stress)) +
 stress
 ```
 
-```{r}
+```{r, echo = FALSE}
 # Communication
 communication <- ggplot(data = combined2, mapping = aes(x = communication)) + 
   geom_bar() + 
@@ -53,7 +57,7 @@ communication <- ggplot(data = combined2, mapping = aes(x = communication)) +
 communication
 ```
 
-```{r}
+```{r, echo = FALSE}
 # Improved management of EPIC in basket messages as a team
 improved_manage_epic <- ggplot(data = combined2, mapping = aes(x = improved_manage_epic)) + 
   geom_bar() + 
@@ -65,7 +69,7 @@ improved_manage_epic <- ggplot(data = combined2, mapping = aes(x = improved_mana
 improved_manage_epic
 ```
 
-```{r}
+```{r, echo = FALSE}
 # Improved patient access
 improved_access <- ggplot(data = combined2, mapping = aes(x = improved_access)) + 
   geom_bar() + 
@@ -79,7 +83,7 @@ improved_access
 
 # Comparison of similar questions (staff first) 
 
-```{r}
+```{r, echo = FALSE, warning = FALSE}
 # Department/HFHC works well
 # Department
 department_works_well <- ggplot(data = combined2, mapping = aes(x = department_works_well)) + 
@@ -101,7 +105,7 @@ hfhc_works_well <- ggplot(data = combined2, mapping = aes(x = HFHC_works_well)) 
 hfhc_works_well
 ```
 
-```{r}
+```{r, echo = FALSE, warning = FALSE}
 # Response times
 # Improved provider response time
 improved_response_time <- ggplot(data = combined2, mapping = aes(x = improved_response_time)) + 
@@ -141,7 +145,7 @@ in_basket <- ggplot(data = combined2, mapping = aes(x = in_basket)) +
 in_basket
 ```
 
-```{r}
+```{r, echo = FALSE, warning = FALSE}
 # Questions
 # Provider availability to ask questions
 improved_availability <- ggplot(data = combined2, mapping = aes(x = improved_availability)) + 
@@ -165,7 +169,7 @@ take_action
 
 # Clinician-only questions
 
-```{r}
+```{r, echo = FALSE, warning = FALSE}
 # Personal time
 personal_time <- ggplot(data = combined2, mapping = aes(x = personal_time)) + 
   geom_bar() + 
@@ -177,7 +181,7 @@ personal_time <- ggplot(data = combined2, mapping = aes(x = personal_time)) +
 personal_time
 ```
 
-```{r}
+```{r, echo = FALSE, warning = FALSE}
 # Disconnect
 disconnect <- ggplot(data = combined2, mapping = aes(x = disconnect)) + 
   geom_bar() + 
@@ -189,7 +193,7 @@ disconnect <- ggplot(data = combined2, mapping = aes(x = disconnect)) +
 disconnect
 ```
 
-```{r}
+```{r, echo = FALSE, warning = FALSE}
 # Free mind
 free_mind <- ggplot(data = combined2, mapping = aes(x = free_mind)) + 
   geom_bar() + 
@@ -201,7 +205,7 @@ free_mind <- ggplot(data = combined2, mapping = aes(x = free_mind)) +
 free_mind
 ```
 
-```{r}
+```{r, echo = FALSE, warning = FALSE}
 # Worn out
 worn_out <- ggplot(data = combined2, mapping = aes(x = worn_out)) + 
   geom_bar() + 
@@ -213,7 +217,7 @@ worn_out <- ggplot(data = combined2, mapping = aes(x = worn_out)) +
 worn_out
 ```
 
-```{r}
+```{r, echo = FALSE, warning = FALSE}
 # Collaborative
 collaborative <- ggplot(data = combined2, mapping = aes(x = collaborative)) + 
   geom_bar() + 
@@ -225,7 +229,7 @@ collaborative <- ggplot(data = combined2, mapping = aes(x = collaborative)) +
 collaborative
 ```
 
-```{r}
+```{r, echo = FALSE, warning = FALSE}
 # Satisfied
 satisfied <- ggplot(data = combined2, mapping = aes(x = satisfied)) + 
   geom_bar() + 
