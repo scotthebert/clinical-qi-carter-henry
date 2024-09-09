@@ -1,0 +1,239 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(pander)
+```
+
+```{r}
+# Load data
+staff <- read_csv("C:/Users/hebers/OneDrive - University Of Massachusetts Medical School/Documents/UMass Projects/Clinical-QI-Carter-Henry/staff_june2024.csv")
+unpaired <- read_csv("C:/Users/hebers/OneDrive - University Of Massachusetts Medical School/Documents/UMass Projects/Clinical-QI-Carter-Henry/unpairedclinician_june2024.csv")
+combined <- staff %>% 
+  full_join(unpaired)
+staff
+unpaired
+combined2 <- combined %>% 
+  mutate_at(c("stress", "communication", "department_works_well", "improved_response_time", "improved_availability", "improved_manage_epic", "improved_access", "personal_time", "disconnect", "free_mind", "worn_out", "HFHC_works_well", "collaborative", "outpatient_epic", "sixty_minutes", "take_action", "in_basket", "satisfied"), funs(recode(., `Strongly Disagree` = 1, `Strongly disagree` = 1, `Disagree` = 2, `Somewhat disagree` = 2, `Neither agree nor disagree` = 3, `Agree` = 4, `Somewhat agree` = 4, `Strongly Agree` = 5)))
+combined
+combined2
+```
+
+# Shared variables
+
+```{r}
+# Role
+table(combined$role) %>% pander()
+```
+
+```{r}
+# Stress
+stress <- ggplot(data = combined2, mapping = aes(x = stress)) + 
+  geom_bar() + 
+  ggtitle("'The amount of job stress I feel is reasonable'") + 
+  xlab("Rating (1 = Strongly Disagree, 5 = Strongly Agree)") + 
+  ylab("") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+stress
+```
+
+```{r}
+# Communication
+communication <- ggplot(data = combined2, mapping = aes(x = communication)) + 
+  geom_bar() + 
+  ggtitle("'Communication between providers, nurses, and other \nmedical personnel is good at HFHC'") + 
+  xlab("Rating (1 = Strongly Disagree, 5 = Strongly Agree)") + 
+  ylab("") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+communication
+```
+
+```{r}
+# Improved management of EPIC in basket messages as a team
+improved_manage_epic <- ggplot(data = combined2, mapping = aes(x = improved_manage_epic)) + 
+  geom_bar() + 
+  ggtitle("'The APP pilot model has improved our management of EPIC \nin basket message management as a team'") + 
+  xlab("Rating (1 = Strongly Disagree, 5 = Strongly Agree)") + 
+  ylab("") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+improved_manage_epic
+```
+
+```{r}
+# Improved patient access
+improved_access <- ggplot(data = combined2, mapping = aes(x = improved_access)) + 
+  geom_bar() + 
+  ggtitle("'The APP pilot model has improved access for patients'") + 
+  xlab("Rating (1 = Strongly Disagree, 5 = Strongly Agree)") + 
+  ylab("") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+improved_access
+```
+
+# Comparison of similar questions (staff first) 
+
+```{r}
+# Department/HFHC works well
+# Department
+department_works_well <- ggplot(data = combined2, mapping = aes(x = department_works_well)) + 
+  geom_bar() + 
+  ggtitle("[Staff] 'My department works well together'") + 
+  xlab("Rating (1 = Strongly Disagree, 5 = Strongly Agree)") + 
+  ylab("") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+department_works_well
+# HFHC
+hfhc_works_well <- ggplot(data = combined2, mapping = aes(x = HFHC_works_well)) + 
+  geom_bar() + 
+  ggtitle("[Unpaired Clinicians] 'The HFHC team works well together'") + 
+  xlab("Rating (1 = Strongly Disagree, 5 = Strongly Agree)") + 
+  ylab("") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+hfhc_works_well
+```
+
+```{r}
+# Response times
+# Improved provider response time
+improved_response_time <- ggplot(data = combined2, mapping = aes(x = improved_response_time)) + 
+  geom_bar() + 
+  ggtitle("[Staff] 'The APP pilot model has improved provider response \ntime to in basket messages'") + 
+  xlab("Rating (1 = Strongly Disagree, 5 = Strongly Agree)") + 
+  ylab("") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+improved_response_time
+# 
+outpatient_epic <- ggplot(data = combined2, mapping = aes(x = outpatient_epic)) + 
+  geom_bar() + 
+  ggtitle("[Outpatient clinicians] 'I am able to manage my outpatient \nEPIC in basket efficiently'") + 
+  xlab("Rating (1 = Strongly Disagree, 5 = Strongly Agree)") + 
+  ylab("") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+outpatient_epic
+# 
+sixty_minutes <- ggplot(data = combined2, mapping = aes(x = sixty_minutes)) + 
+  geom_bar() + 
+  ggtitle("[Outpatient clinicians] 'I spend greater than 60 minutes outside of \nclinic hours completing in basket messages most days'") + 
+  xlab("Rating (1 = Strongly Disagree, 5 = Strongly Agree)") + 
+  ylab("") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+sixty_minutes
+# 
+in_basket <- ggplot(data = combined2, mapping = aes(x = in_basket)) + 
+  geom_bar() + 
+  ggtitle("[Outpatient clinicians] 'I have found the APP collaboration model \nhas improved my ability to manage in basket tasks'") + 
+  xlab("Rating (1 = Strongly Disagree, 5 = Strongly Agree)") + 
+  ylab("") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+in_basket
+```
+
+```{r}
+# Questions
+# Provider availability to ask questions
+improved_availability <- ggplot(data = combined2, mapping = aes(x = improved_availability)) + 
+  geom_bar() + 
+  ggtitle("[Staff] 'The APP pilot model has improved provider availability to \nme to ask questions when I have them'") + 
+  xlab("Rating (1 = Strongly Disagree, 5 = Strongly Agree)") + 
+  ylab("") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+improved_availability
+# Ability to take action on messages
+take_action <- ggplot(data = combined2, mapping = aes(x = take_action)) + 
+  geom_bar() + 
+  ggtitle("[Outpatient clinicians] 'I am able to take action on the messages sent to \nme in my in basket without sending the message back to the team for \nadditional information'") + 
+  xlab("Rating (1 = Strongly Disagree, 5 = Strongly Agree)") + 
+  ylab("") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+take_action
+```
+
+# Clinician-only questions
+
+```{r}
+# Personal time
+personal_time <- ggplot(data = combined2, mapping = aes(x = personal_time)) + 
+  geom_bar() + 
+  ggtitle("'I can enjoy my personal time without focusing on work matters'") + 
+  xlab("Rating (1 = Strongly Disagree, 5 = Strongly Agree)") + 
+  ylab("") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+personal_time
+```
+
+```{r}
+# Disconnect
+disconnect <- ggplot(data = combined2, mapping = aes(x = disconnect)) + 
+  geom_bar() + 
+  ggtitle("'I am able to disconnect from work communications during \nmy free time (emails/phone etc)'") + 
+  xlab("Rating (1 = Strongly Disagree, 5 = Strongly Agree)") + 
+  ylab("") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+disconnect
+```
+
+```{r}
+# Free mind
+free_mind <- ggplot(data = combined2, mapping = aes(x = free_mind)) + 
+  geom_bar() + 
+  ggtitle("'I am able to free my mind from work when I am away from it'") + 
+  xlab("Rating (1 = Strongly Disagree, 5 = Strongly Agree)") + 
+  ylab("") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+free_mind
+```
+
+```{r}
+# Worn out
+worn_out <- ggplot(data = combined2, mapping = aes(x = worn_out)) + 
+  geom_bar() + 
+  ggtitle("'I feel worn out at the end of a working day'") + 
+  xlab("Rating (1 = Strongly Disagree, 5 = Strongly Agree)") + 
+  ylab("") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+worn_out
+```
+
+```{r}
+# Collaborative
+collaborative <- ggplot(data = combined2, mapping = aes(x = collaborative)) + 
+  geom_bar() + 
+  ggtitle("'I have a collaborative working relationship with APPs in the HFHC practice'") + 
+  xlab("Rating (1 = Strongly Disagree, 5 = Strongly Agree)") + 
+  ylab("") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+collaborative
+```
+
+```{r}
+# Satisfied
+satisfied <- ggplot(data = combined2, mapping = aes(x = satisfied)) + 
+  geom_bar() + 
+  ggtitle("'I am satisfied with the APP collaboration model'") + 
+  xlab("Rating (1 = Strongly Disagree, 5 = Strongly Agree)") + 
+  ylab("") + 
+  coord_cartesian(xlim = c(0.5, 5.5)) + 
+  theme_classic()
+satisfied
+```
+
